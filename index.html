@@ -33,6 +33,8 @@
     --maroon: #681f32;
     --wine: #8b3448;
     --gold: #b18a4a;
+    --marigold: #f39c12;
+    --marigold-deep: #e67e22;
     --ink: #39272a;
     --muted: #806d68;
     --shadow: 0 8px 24px rgba(104, 31, 50, 0.08);
@@ -41,8 +43,8 @@
     --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
     --font-script: 'Parisienne', 'Cormorant Garamond', cursive;
     --font-sans: 'Jost', 'Helvetica Neue', Arial, sans-serif;
-    --font-bengali: 'Galada', serif; /* only for the শুভ বিবাহ heading */
-    --font-monogram: 'Parisienne', cursive; /* Latin "A & D" monogram stays the same in every language */
+    --font-bengali: 'Galada', serif;
+    --font-monogram: 'Parisienne', cursive;
 }
 
 * { box-sizing: border-box; }
@@ -59,13 +61,110 @@ body {
 }
 a { color: inherit; }
 
+/* --- Illustrated Motif Images --- */
+.motif-img {
+    display: block;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* --- Bengali Alpona Border System --- */
+.alpona-frieze {
+    width: 100%;
+    height: 36px;
+    background-repeat: repeat-x;
+    background-position: center;
+    opacity: 0.78;
+    pointer-events: none;
+}
+.alpona-frieze.gold {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='36' viewBox='0 0 120 36'%3E%3Cg fill='none' stroke='%23b18a4a' stroke-width='1.35' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M0 18 Q15 4 30 18 T60 18 T90 18 T120 18'/%3E%3Ccircle cx='30' cy='10' r='2.5' fill='%23b18a4a'/%3E%3Ccircle cx='90' cy='26' r='2.5' fill='%23b18a4a'/%3E%3Cpath d='M60 6 L64 14 L72 18 L64 22 L60 30 L56 22 L48 18 L56 14 Z'/%3E%3Ccircle cx='15' cy='27' r='1.6'/%3E%3Ccircle cx='105' cy='9' r='1.6'/%3E%3C/g%3E%3C/svg%3E");
+}
+.alpona-frieze.light {
+    opacity: 0.55;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='36' viewBox='0 0 120 36'%3E%3Cg fill='none' stroke='%23e8cb8c' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M0 18 Q15 4 30 18 T60 18 T90 18 T120 18'/%3E%3Ccircle cx='30' cy='10' r='2.2' fill='%23e8cb8c'/%3E%3Ccircle cx='90' cy='26' r='2.2' fill='%23e8cb8c'/%3E%3Cpath d='M60 7 L63.5 14.5 L71 18 L63.5 21.5 L60 29 L56.5 21.5 L49 18 L56.5 14.5 Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.alpona-frame {
+    position: relative;
+}
+.alpona-frame::before,
+.alpona-frame::after {
+    content: "";
+    position: absolute;
+    width: 84px;
+    height: 84px;
+    pointer-events: none;
+    opacity: 0.72;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23b18a4a' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M8 92 C8 40, 40 8, 92 8'/%3E%3Cpath d='M18 92 C18 48, 48 18, 92 18' stroke-dasharray='3 4'/%3E%3Ccircle cx='24' cy='24' r='5'/%3E%3Ccircle cx='24' cy='24' r='1.8' fill='%23b18a4a'/%3E%3Cpath d='M44 12 C48 20, 56 20, 60 12 C56 6, 48 6, 44 12 Z'/%3E%3Cpath d='M12 44 C20 48, 20 56, 12 60 C6 56, 6 48, 12 44 Z'/%3E%3Ccircle cx='74' cy='12' r='2.5' fill='%23b18a4a'/%3E%3Ccircle cx='12' cy='74' r='2.5' fill='%23b18a4a'/%3E%3C/g%3E%3C/svg%3E");
+}
+.alpona-frame::before {
+    top: 10px;
+    left: 10px;
+}
+.alpona-frame::after {
+    bottom: 10px;
+    right: 10px;
+    transform: rotate(180deg);
+}
+
+/* --- Falling Marigold Petals Layer --- */
+#petal-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 950;
+    overflow: hidden;
+}
+.marigold-petal {
+    position: absolute;
+    top: -36px;
+    width: var(--petal-size, 18px);
+    height: calc(var(--petal-size, 18px) * 1.25);
+    background: radial-gradient(circle at 35% 30%, #ffd166 0%, var(--marigold) 55%, var(--marigold-deep) 100%);
+    border-radius: 75% 25% 70% 30% / 65% 35% 65% 35%;
+    box-shadow: inset 0 -2px 4px rgba(139, 52, 72, 0.22), 0 2px 6px rgba(230, 126, 34, 0.25);
+    opacity: 0;
+    will-change: transform, opacity;
+    animation: petalFall var(--fall-duration, 6.5s) linear var(--fall-delay, 0s) forwards;
+}
+.marigold-petal.alt {
+    background: radial-gradient(circle at 30% 30%, #ffe082 0%, #f59e0b 60%, #c2410c 100%);
+    border-radius: 30% 70% 35% 65% / 40% 60% 40% 60%;
+}
+@keyframes petalFall {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, -24px, 0) rotate(0deg) scale(0.85);
+    }
+    12% {
+        opacity: 0.92;
+    }
+    50% {
+        transform: translate3d(var(--sway, 42px), 50vh, 0) rotate(185deg) scale(1);
+    }
+    85% {
+        opacity: 0.85;
+    }
+    100% {
+        opacity: 0;
+        transform: translate3d(calc(var(--sway, 42px) * -0.6), 106vh, 0) rotate(370deg) scale(0.92);
+    }
+}
+
 /* --- 3D Envelope Animation Overlay --- */
 .locked { overflow: hidden; }
 #entry-overlay {
     position: fixed; inset: 0; background: var(--maroon); z-index: 9999;
     display: flex; justify-content: center; align-items: center;
     transition: opacity 0.9s ease, visibility 0.9s;
-    background-image: radial-gradient(circle at center, rgba(177,138,74,0.15) 0%, transparent 70%);
+    background-image:
+        radial-gradient(circle at center, rgba(177,138,74,0.18) 0%, transparent 70%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/200%2Fsvg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%23b18a4a' stroke-opacity='0.14' stroke-width='1.2'%3E%3Ccircle cx='80' cy='80' r='58'/%3E%3Ccircle cx='80' cy='80' r='42' stroke-dasharray='4 4'/%3E%3Cpath d='M80 14 L86 28 L100 34 L86 40 L80 54 L74 40 L60 34 L74 28 Z'/%3E%3Cpath d='M80 106 L86 120 L100 126 L86 132 L80 146 L74 132 L60 126 L74 120 Z'/%3E%3Cpath d='M14 80 L28 74 L34 60 L40 74 L54 80 L40 86 L34 100 L28 86 Z'/%3E%3Cpath d='M106 80 L120 74 L126 60 L132 74 L146 80 L132 86 L126 100 L120 86 Z'/%3E%3C/g%3E%3C/svg%3E");
     overflow: hidden;
 }
 #entry-overlay.hidden { 
@@ -73,10 +172,9 @@ a { color: inherit; }
 }
 
 .envelope-wrapper {
-    /* Sized so envelope + risen letter always fit on screen (portrait & landscape) */
     --env-width: min(92vw, 80vh, 720px);
     width: var(--env-width);
-    height: calc(var(--env-width) / 1.44); /* Maintains the original 360/250 aspect ratio */
+    height: calc(var(--env-width) / 1.44);
     position: relative;
     perspective: 1200px;
     will-change: transform;
@@ -95,6 +193,7 @@ a { color: inherit; }
     will-change: transform;
     z-index: 1; text-align: center; border: 1px solid var(--gold);
     background-image: linear-gradient(120deg, #fffaf2 0%, #fdf5e6 100%);
+    padding: 12px 16px;
 }
 .letter .mandala { font-size: calc(var(--env-width) * 0.08); color: var(--gold); margin-bottom: 3%; line-height: 1; }
 .letter h3 { color: var(--maroon); margin: 0 0 3%; font-family: var(--font-script); font-size: calc(var(--env-width) * 0.1); font-weight: 400; line-height: 1.1; }
@@ -154,15 +253,12 @@ a { color: inherit; }
     clip-path: polygon(0 0, 50% 98%, 100% 0);
     background: linear-gradient(to bottom, #a02845, #7d2038);
 }
-/* Back face of the flap. It is pre-flipped with rotateX(180deg), so its triangle
-   must be drawn mirrored (point at top) to line up with the front face once opened. */
 .flap-inside {
     position: absolute; inset: 0; backface-visibility: hidden;
     clip-path: polygon(0 100%, 50% 0, 100% 100%);
     background: linear-gradient(to left, #d4af37, #f9f0c2, #8a6327);
     transform: rotateX(180deg);
 }
-/* Decorative gold lining with a subtle damask dot pattern */
 .flap-inside::before {
     content: ''; position: absolute; inset: 0 0 2px 0;
     clip-path: polygon(0 100%, 50% 2%, 100% 100%);
@@ -171,7 +267,6 @@ a { color: inherit; }
         radial-gradient(circle, rgba(255,250,242,0.5) 1px, transparent 1.6px) 7px 7px / 14px 14px,
         linear-gradient(to top, #e8d2a0, #c9a560);
 }
-/* Shading that sells the 3D turn: front darkens as it tips away, lining brightens as it faces us */
 .flap-shade {
     position: absolute; inset: 0; z-index: 1;
     background: #1a0509; opacity: 0; pointer-events: none;
@@ -234,7 +329,7 @@ a { color: inherit; }
 .nav-actions { display: flex; align-items: center; gap: clamp(14px, 2.5vw, 28px); }
 .hero-greeting { font-family: var(--font-script); color: var(--gold); font-size: clamp(30px, 7vw, 44px); line-height: 1.2; margin: 6px 0 0; }
 
-/* Hamburger (mobile only) — three bars that morph into an X */
+/* Hamburger (mobile only) */
 .menu-toggle {
     display: none; position: relative; width: 44px; height: 44px; margin-right: -10px;
     border: 0; background: transparent; cursor: pointer; border-radius: 50%;
@@ -265,8 +360,8 @@ a { color: inherit; }
 }
 .hero-zoom {
     position: absolute; top: -5%; left: -5%; right: -5%; bottom: -5%;
-    background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="none" stroke="%23b18a4a" stroke-width="0.5" stroke-dasharray="2 4" opacity="0.2"/></svg>');
-    background-size: 150px 150px;
+    background-image: url("data:image/svg+xml,%3Csvg width='140' height='140' viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23b18a4a' stroke-width='0.75' opacity='0.22'%3E%3Ccircle cx='70' cy='70' r='54' stroke-dasharray='3 4'/%3E%3Ccircle cx='70' cy='70' r='34'/%3E%3Cpath d='M70 10 L74 22 L86 26 L74 30 L70 42 L66 30 L54 26 L66 22 Z'/%3E%3Cpath d='M70 98 L74 110 L86 114 L74 118 L70 130 L66 118 L54 114 L66 110 Z'/%3E%3Cpath d='M10 70 L22 66 L26 54 L30 66 L42 70 L30 74 L26 86 L22 74 Z'/%3E%3Cpath d='M98 70 L110 66 L114 54 L118 66 L130 70 L118 74 L114 86 L110 74 Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 160px 160px;
     z-index: -1;
     animation: slowZoom 25s linear infinite alternate;
 }
@@ -284,6 +379,25 @@ a { color: inherit; }
     box-shadow: 0 0 0 20px rgba(177, 138, 74, 0.08), 0 0 0 45px rgba(177, 138, 74, 0.05);
 }
 .hero:after { left: auto; right: calc(var(--ring) / -2); top: auto; bottom: 5%; }
+
+/* Side Bengali Motif Accents (kolagach.png & gachkouto.png) */
+.hero-side-motif {
+    position: absolute;
+    bottom: 20px;
+    height: clamp(120px, 24vh, 230px);
+    width: auto;
+    opacity: 0.9;
+    z-index: 0;
+}
+.hero-side-motif.left {
+    left: clamp(6px, 2.5vw, 32px);
+}
+.hero-side-motif.right {
+    right: clamp(6px, 2.5vw, 32px);
+}
+@media (max-width: 640px) {
+    .hero-side-motif { opacity: 0.25; height: 110px; }
+}
 
 .hero-content { z-index: 1; position: relative; }
 .mandala { font-size: clamp(24px, 5vw, 32px); color: var(--gold); letter-spacing: .35em; }
@@ -330,14 +444,22 @@ h2 { text-align: center; color: var(--maroon); font-weight: 500; font-size: clam
 /* --- Story & Events --- */
 .story { background: var(--paper); }
 .story-card {
-    max-width: 780px; margin: 0 auto; border: 1px solid rgba(177, 138, 74, 0.4);
-    padding: clamp(30px, 6vw, 48px) clamp(22px, 6vw, 48px); text-align: center; line-height: 1.8; color: var(--muted);
+    max-width: 780px; margin: 0 auto; border: 1px solid rgba(177, 138, 74, 0.45);
+    padding: clamp(34px, 6vw, 52px) clamp(24px, 6vw, 52px); text-align: center; line-height: 1.8; color: var(--muted);
     background: #fffdf8; border-radius: var(--border-radius); box-shadow: var(--shadow);
     position: relative;
 }
-.story-card::before { content: "❧"; position: absolute; top: 15px; left: 20px; color: var(--gold); opacity: 0.3; font-size: 24px; }
-.story-card::after { content: "❧"; position: absolute; bottom: 15px; right: 20px; color: var(--gold); opacity: 0.3; font-size: 24px; transform: rotate(180deg); }
-.story-card .initials { font-family: var(--font-monogram); font-size: clamp(52px, 13vw, 68px); line-height: 1.1; color: var(--gold); margin-bottom: 12px; }
+.story-card .gatchora-badge {
+    height: clamp(72px, 16vw, 105px);
+    width: auto;
+    margin: 0 auto 10px;
+}
+.story-card .kone-accent {
+    height: clamp(95px, 20vw, 140px);
+    width: auto;
+    margin: 14px auto 0;
+}
+.story-card .initials { font-family: var(--font-monogram); font-size: clamp(46px, 11vw, 60px); line-height: 1.1; color: var(--gold); margin-bottom: 10px; }
 .story-card p { font-size: clamp(18px, 4.4vw, 21px); }
 
 .events { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: clamp(16px, 3vw, 24px); }
@@ -347,7 +469,10 @@ h2 { text-align: center; color: var(--maroon); font-weight: 500; font-size: clam
     transition: transform 0.3s ease; position: relative; overflow: hidden;
 }
 .event:hover { transform: translateY(-5px); border-color: var(--gold); }
-.event .symbol { font-size: 32px; color: var(--gold); margin-bottom: 12px; display: inline-block; animation: float 4s ease-in-out infinite; }
+.event .motif-icon {
+    height: 76px; width: auto; margin: 0 auto 12px;
+    animation: float 4s ease-in-out infinite;
+}
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 .event h3 { color: var(--maroon); font-size: clamp(27px, 6vw, 32px); font-weight: 500; line-height: 1.2; margin: 0 0 10px; }
 .event-desc { font: 400 clamp(15px, 3.8vw, 16px)/1.7 var(--font-sans); color: var(--muted); margin: 0 0 18px; }
@@ -392,13 +517,13 @@ h2 { text-align: center; color: var(--maroon); font-weight: 500; font-size: clam
 .rsvp { background: #efe3d5; }
 .rsvp-form {
     max-width: 600px; margin: 0 auto; background: #fffaf2; border: 1px solid rgba(177, 138, 74, 0.4);
-    padding: clamp(24px, 6vw, 40px); border-radius: var(--border-radius); box-shadow: var(--shadow);
+    padding: clamp(28px, 6vw, 44px); border-radius: var(--border-radius); box-shadow: var(--shadow);
 }
 .field { margin-bottom: 22px; text-align: left; }
 .field label { display: block; font: 500 12px/1.4 var(--font-sans); letter-spacing: .16em; text-transform: uppercase; color: var(--maroon); margin-bottom: 8px; }
 .field input, .field select, .field textarea {
     width: 100%; padding: 14px; border: 1px solid rgba(177, 138, 74, 0.5); border-radius: 8px;
-    background: #fffdf9; font: 400 16px/1.4 var(--font-sans); color: var(--ink); /* 16px stops iOS zoom-on-focus */
+    background: #fffdf9; font: 400 16px/1.4 var(--font-sans); color: var(--ink);
     transition: all 0.3s;
 }
 .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--maroon); box-shadow: 0 0 0 3px rgba(104, 31, 50, 0.1); }
@@ -413,10 +538,13 @@ h2 { text-align: center; color: var(--maroon); font-weight: 500; font-size: clam
 
 .venues { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: clamp(16px, 3vw, 24px); }
 .venue-card {
-    text-align: center; padding: clamp(30px, 6vw, 45px) clamp(20px, 5vw, 30px); border: 1px solid rgba(177, 138, 74, 0.4);
+    text-align: center; padding: clamp(34px, 6vw, 48px) clamp(22px, 5vw, 32px); border: 1px solid rgba(177, 138, 74, 0.4);
     background: #fffaf2; border-radius: var(--border-radius); box-shadow: var(--shadow);
 }
-.venue-card h3 { font-weight: 500; color: var(--maroon); font-size: clamp(27px, 6vw, 32px); line-height: 1.2; margin: 10px 0 6px; }
+.venue-card .venue-motif {
+    height: 78px; width: auto; margin: 0 auto 8px;
+}
+.venue-card h3 { font-weight: 500; color: var(--maroon); font-size: clamp(27px, 6vw, 32px); line-height: 1.2; margin: 6px 0 6px; }
 .venue-card .venue-name { color: var(--ink); font-size: clamp(19px, 4.6vw, 21px); font-weight: 500; margin: 0; }
 .venue-card .place { color: var(--muted); font: 500 13px/1.6 var(--font-sans); letter-spacing: .1em; text-transform: uppercase; margin: 2px 0 18px; }
 .venue-map {
@@ -488,18 +616,23 @@ footer p { font: 500 12px/1.6 var(--font-sans); letter-spacing: .25em; opacity: 
     .navlinks a:last-child { border-bottom: 0; }
     .navlinks a::after { display: none; }
     .event:hover { transform: none; }
+    .event .motif-icon { animation: none; }
+    .alpona-frame::before, .alpona-frame::after { width: 58px; height: 58px; }
     .music-btn { bottom: calc(16px + env(safe-area-inset-bottom)); right: calc(16px + env(safe-area-inset-right)); padding: 10px 16px; font-size: 12px; }
 }
 @media (max-width: 380px) {
     .music-btn::before { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-    .hero-zoom, .event .symbol, .music-btn.pulse { animation: none; }
+    .hero-zoom, .event .motif-icon, .music-btn.pulse, .marigold-petal { animation: none; }
     html { scroll-behavior: auto; }
 }
 </style>
 </head>
 <body class="locked">
+
+<!-- Falling Marigold Petals Container -->
+<div id="petal-layer" aria-hidden="true"></div>
 
 <!-- Full Screen 3D Entry Overlay -->
 <div id="entry-overlay" role="dialog" aria-modal="true" aria-label="Wedding invitation envelope">
@@ -527,8 +660,6 @@ footer p { font: 500 12px/1.6 var(--font-sans); letter-spacing: .25em; opacity: 
 </div>
 
 <!-- Audio Element -->
-<!-- preload="metadata": don't download the track until the guest opens the envelope.
-     AAC (~1.3 MB) first; the original MP3 is only fetched by browsers that can't play AAC. -->
 <audio id="bgMusic" loop preload="metadata">
     <source src="webmusic.m4a" type="audio/mp4">
     <source src="webmusic.mp3" type="audio/mpeg">
@@ -561,6 +692,11 @@ footer p { font: 500 12px/1.6 var(--font-sans); letter-spacing: .25em; opacity: 
     <section class="hero" id="home">
         <div class="hero-bg"></div>
         <div class="hero-zoom"></div>
+
+        <!-- Left kolagach.png & Right gachkouto.png -->
+        <img class="motif-img hero-side-motif left" src="kolagach.png" alt="" aria-hidden="true">
+        <img class="motif-img hero-side-motif right" src="gachkouto.png" alt="" aria-hidden="true">
+
         <div class="hero-content animate-up" style="transition-delay:0.2s">
             <div class="mandala">❧ ✦ ❧</div>
             <p class="hero-greeting" id="heroGreeting" hidden></p>
@@ -574,8 +710,9 @@ footer p { font: 500 12px/1.6 var(--font-sans); letter-spacing: .25em; opacity: 
         </div>
     </section>
 
+    <div class="alpona-frieze gold" aria-hidden="true"></div>
+
     <section class="countdown animate-up">
-        <!--div class="section-kicker" style="color:#e8cb8c">The countdown begins</div>-->
         <h2 class="bengali" lang="bn"> আর মাত্র </h2>
         <div class="timer">
             <div class="timebox"><strong id="days">---</strong><span>Days</span></div>
@@ -585,28 +722,35 @@ footer p { font: 500 12px/1.6 var(--font-sans); letter-spacing: .25em; opacity: 
         </div>
     </section>
 
+    <div class="alpona-frieze gold" aria-hidden="true"></div>
+
     <section class="story" id="story">
         <div class="wrap">
             <div class="section-kicker animate-up">A little bit about us</div>
             <h2 class="animate-up">Our Story</h2>
             <p class="intro animate-up">Every love story is special. Ours is a journey of little moments, shared laughter, endless conversations and a promise to choose each other, every day.</p>
-            <div class="story-card animate-up delay-1">
+            <div class="story-card alpona-frame animate-up delay-1">
+                <img class="motif-img gatchora-badge" src="gatchora.png" alt="Ceremonial Gathchhora knot">
                 <div class="initials">A <span style="color:var(--maroon)">&</span> D</div>
                 <p>From the day our paths crossed to the day we begin a new chapter as one, we're grateful for every moment that brought us here. We can't wait to celebrate this beginning with the people who mean the most to us.</p>
                 <p><em>Our story is still being written — and the best chapter starts now.</em></p>
+                <img class="motif-img kone-accent" src="kone.png" alt="Traditional Bengali bride with betel leaf">
             </div>
         </div>
     </section>
+
+    <div class="alpona-frieze gold" aria-hidden="true"></div>
 
     <section id="events">
         <div class="wrap">
             <div class="section-kicker animate-up">Save the dates</div>
             <h2 class="animate-up">Wedding Celebrations</h2>
             <p class="intro animate-up">A few days of traditions, laughter, music and memories. We would love to have you with us.</p>
-            <!-- Cards are rendered from the EVENTS config in the script (edit dates and times there) -->
             <div class="events" id="eventsGrid"></div>
         </div>
     </section>
+
+    <div class="alpona-frieze gold" aria-hidden="true"></div>
 
     <section class="gallery" id="gallery">
         <div class="wrap">
@@ -622,14 +766,16 @@ footer p { font: 500 12px/1.6 var(--font-sans); letter-spacing: .25em; opacity: 
         </div>
     </section>
 
+    <div class="alpona-frieze gold" aria-hidden="true"></div>
+
     <section id="venue">
         <div class="wrap">
             <div class="section-kicker animate-up">Find your way to us</div>
             <h2 class="animate-up">Wedding Venues</h2>
 
             <div class="venues">
-                <div class="venue-card animate-up delay-1">
-                    <div class="mandala">⌖</div>
+                <div class="venue-card alpona-frame animate-up delay-1">
+                    <img class="motif-img venue-motif" src="gachkouto.png" alt="Gachkouto motif">
                     <h3>Wedding</h3>
                     <p class="venue-name">City Tower Banquet Hall</p>
                     <p class="place">Durgapur, West Bengal</p>
@@ -640,8 +786,8 @@ footer p { font: 500 12px/1.6 var(--font-sans); letter-spacing: .25em; opacity: 
                     <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&amp;destination=23.5347974,87.3393043">Get directions</a>
                 </div>
 
-                <div class="venue-card animate-up delay-2">
-                    <div class="mandala">✧</div>
+                <div class="venue-card alpona-frame animate-up delay-2">
+                    <img class="motif-img venue-motif" src="pan.png" alt="Paan motif">
                     <h3>Reception</h3>
                     <p class="venue-name">Shiv Shakti Garden</p>
                     <p class="place">Madhyamgram, Kolkata</p>
@@ -655,13 +801,14 @@ footer p { font: 500 12px/1.6 var(--font-sans); letter-spacing: .25em; opacity: 
         </div>
     </section>
 
+    <div class="alpona-frieze gold" aria-hidden="true"></div>
+
     <section class="rsvp" id="rsvp">
         <div class="wrap">
             <div class="section-kicker animate-up">We hope you can make it</div>
             <h2 class="animate-up">Kindly RSVP</h2>
             <p class="intro animate-up">Please let us know if you'll be joining us. Your presence will make our celebration even more special.</p>
-            <form class="rsvp-form animate-up delay-1" id="rsvpForm" novalidate>
-                <!-- Honeypot: hidden from people, bots tend to fill it in -->
+            <form class="rsvp-form alpona-frame animate-up delay-1" id="rsvpForm" novalidate>
                 <div class="hp" aria-hidden="true">
                     <label for="website">Leave this empty</label>
                     <input id="website" name="website" tabindex="-1" autocomplete="off">
@@ -673,7 +820,6 @@ footer p { font: 500 12px/1.6 var(--font-sans); letter-spacing: .25em; opacity: 
                 <div class="field">
                     <label for="attendance">Will you attend?</label>
                     <select id="attendance" name="attendance" required>
-                        <!-- Values stay in English so the sheet is consistent whatever language the guest uses -->
                         <option value="">Please select</option>
                         <option value="Joyfully accepts for Wedding & Reception">Joyfully accepts for Wedding & Reception</option>
                         <option value="Attending Wedding only (Durgapur)">Attending Wedding only (Durgapur)</option>
@@ -699,6 +845,7 @@ footer p { font: 500 12px/1.6 var(--font-sans); letter-spacing: .25em; opacity: 
 </main>
 
 <footer inert>
+    <div class="alpona-frieze light" style="margin-bottom: 24px;" aria-hidden="true"></div>
     <div class="mandala" style="color:#e8cb8c; margin-bottom: 20px;">❧ ✦ ❧</div>
     <div class="names animate-up">Aratrik & Debojit</div>
     <p class="animate-up delay-1">21 · 11 · 2027</p>
@@ -709,23 +856,18 @@ footer p { font: 500 12px/1.6 var(--font-sans); letter-spacing: .25em; opacity: 
 // =====================================================================
 //  EVENT DETAILS — edit here. Everything on the cards (and the calendar
 //  invites) is generated from this list.
-//    date:  'YYYY-MM-DD' (or null → "Date & time to be announced", no calendar button)
-//    start / end: 'HH:MM' 24h India time (or null → all-day invite, "Time to be announced")
-//    venue: key in VENUES (or null)
-//  Names and descriptions live in STRINGS below (ev_<id>_name / ev_<id>_desc).
 // =====================================================================
 const EVENTS = [
-    { id: 'aiburo',    symbol: '❀', date: null,         start: null, end: null, venue: null },
-    { id: 'holud',     symbol: '✿', date: null,         start: null, end: null, venue: null },
-    { id: 'wedding',   symbol: '❧', date: '2027-11-21', start: null, end: null, venue: 'durgapur' },
-    { id: 'reception', symbol: '✦', date: '2027-11-23', start: null, end: null, venue: 'kolkata' },
+    { id: 'aiburo',    img: 'pan.png',   alt: 'Paan betel leaves', date: null,         start: null, end: null, venue: null },
+    { id: 'holud',     img: 'kulo.png',  alt: 'Kulo winnowing basket', date: null,         start: null, end: null, venue: null },
+    { id: 'wedding',   img: 'yagna.png', alt: 'Sacred Yagna fire', date: '2027-11-21', start: null, end: null, venue: 'durgapur' },
+    { id: 'reception', img: 'mukut.png', alt: 'Traditional Mukut crown', date: '2027-11-23', start: null, end: null, venue: 'kolkata' },
 ];
 const VENUES = {
     durgapur: { name: 'City Tower Banquet Hall', address: 'Durgapur, West Bengal, India' },
     kolkata:  { name: 'Shiv Shakti Garden', address: '305 Jessore Rd, Madhyamgram, Kolkata, West Bengal 700132, India' },
 };
 
-// Text used by the script (cards, calendar invites, RSVP/music messages)
 const STRINGS = {
     names: 'Aratrik & Debojit',
     greetDear: 'Dear {name},', greetLine: "you're warmly invited to the wedding of",
@@ -750,8 +892,6 @@ const STRINGS = {
 const t = (key, vars = {}) => (STRINGS[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
 const params = new URLSearchParams(location.search);
 
-// --- Personal greeting: share links like ?guest=Rahul%20Da ---
-// Only ever inserted with textContent, never as HTML.
 const guestName = (params.get('guest') || params.get('to') || '')
     .replace(/[\u0000-\u001f\u007f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 40);
 
@@ -782,7 +922,7 @@ function eventTimes(ev) {
     }
     const start = new Date(`${ev.date}T${ev.start}:00+05:30`);
     const end = ev.end ? new Date(`${ev.date}T${ev.end}:00+05:30`) : new Date(start.getTime() + 3 * 36e5);
-    if (end <= start) end.setTime(end.getTime() + 864e5); // ends after midnight
+    if (end <= start) end.setTime(end.getTime() + 864e5);
     return { allDay: false, start, end };
 }
 
@@ -842,7 +982,6 @@ function renderEvents() {
     const grid = document.getElementById('eventsGrid');
     grid.replaceChildren(...EVENTS.map((ev, i) => {
         const meta = el('div', { class: 'event-meta' });
-        // When
         let when;
         if (!ev.date) {
             when = el('span', { class: 'tba' }, t('dateTba'));
@@ -858,14 +997,21 @@ function renderEvents() {
             when = el('span', {}, dateStr, ' · ', timeStr ? timeStr : el('span', { class: 'tba' }, t('timeTba')));
         }
         meta.append(el('div', { class: 'meta-row' }, el('span', { class: 'meta-ico', 'aria-hidden': 'true' }, '◷'), when));
-        // Where
         if (ev.venue) {
             const key = ev.venue === 'durgapur' ? 'vDurgapurShort' : 'vKolkataShort';
             meta.append(el('div', { class: 'meta-row' }, el('span', { class: 'meta-ico', 'aria-hidden': 'true' }, '⌖'), el('span', {}, t(key))));
         }
 
+        const iconImg = el('img', {
+            class: 'motif-img motif-icon',
+            src: ev.img,
+            alt: ev.alt,
+            loading: 'lazy',
+            decoding: 'async'
+        });
+
         const card = el('div', { class: `event animate-up delay-${(i % 2) + 1}` },
-            el('div', { class: 'symbol', 'aria-hidden': 'true' }, ev.symbol),
+            iconImg,
             el('h3', {}, t(`ev_${ev.id}_name`)),
             el('p', { class: 'event-desc' }, t(`ev_${ev.id}_desc`)),
             meta);
@@ -884,7 +1030,7 @@ function renderEvents() {
 
 renderGreeting();
 renderEvents();
-if (guestName) document.getElementById('guest').value = guestName; // pre-fill the RSVP form
+if (guestName) document.getElementById('guest').value = guestName;
 
 // --- Countdown Timer ---
 const weddingDate = new Date('2027-11-21T00:00:00+05:30').getTime();
@@ -936,10 +1082,38 @@ menuToggle.addEventListener('click', e => {
     e.stopPropagation();
     setMenu(!navLinks.classList.contains('open'));
 });
-// Close when tapping outside the header, pressing Escape, or resizing up to desktop
 document.addEventListener('click', e => { if (!e.target.closest('.topbar')) closeMenu(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 matchMedia('(min-width: 769px)').addEventListener('change', e => { if (e.matches) closeMenu(); });
+
+// --- Falling Marigold Petals Effect ---
+const petalLayer = document.getElementById('petal-layer');
+
+function spawnMarigoldPetals(count = 42) {
+    if (!petalLayer || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < count; i++) {
+        const petal = document.createElement('span');
+        petal.className = `marigold-petal${i % 3 === 0 ? ' alt' : ''}`;
+
+        const size = 14 + Math.random() * 12;
+        const left = Math.random() * 100;
+        const delay = Math.random() * 1.6;
+        const duration = 5.2 + Math.random() * 3.4;
+        const sway = (Math.random() > 0.5 ? 1 : -1) * (28 + Math.random() * 55);
+
+        petal.style.left = `${left}%`;
+        petal.style.setProperty('--petal-size', `${size.toFixed(1)}px`);
+        petal.style.setProperty('--fall-delay', `${delay.toFixed(2)}s`);
+        petal.style.setProperty('--fall-duration', `${duration.toFixed(2)}s`);
+        petal.style.setProperty('--sway', `${sway.toFixed(1)}px`);
+
+        petal.addEventListener('animationend', () => petal.remove(), { once: true });
+        fragment.append(petal);
+    }
+    petalLayer.append(fragment);
+}
 
 // --- Music Player & Envelope Logic ---
 let isPlaying = false;
@@ -950,7 +1124,6 @@ const bgMusic = document.getElementById('bgMusic');
 const entryOverlay = document.getElementById('entry-overlay');
 const openBtn = document.getElementById('openInvitation');
 
-// Envelope Opening Sequence
 const wait = ms => new Promise(r => setTimeout(r, ms));
 let envelopeOpened = false;
 
@@ -983,8 +1156,8 @@ openBtn.addEventListener('click', async () => {
     if (envelopeOpened) return;
     envelopeOpened = true;
 
-    // Must be called synchronously inside the click for autoplay policies
     playMusic();
+    spawnMarigoldPetals(46);
 
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
         revealSite();
@@ -1002,12 +1175,11 @@ openBtn.addEventListener('click', async () => {
     openBtn.classList.add('broken');
     await wait(250);
 
-    const FLAP_ANGLE = 165; // stop just short of flat so the open flap keeps a hint of 3D tilt
+    const FLAP_ANGLE = 165;
     const flapOpts = { duration: 1100, easing: 'cubic-bezier(0.55, 0, 0.25, 1)', fill: 'forwards' };
     const flapOpen = topFlap.animate(
         [{ transform: 'rotateX(0deg)' }, { transform: `rotateX(${FLAP_ANGLE}deg)` }], flapOpts
     );
-    // Shading keyframes share the flap's easing; offset 0.55 ≈ the moment the flap is edge-on (90°)
     topFlap.querySelector('.flap-outside .flap-shade').animate(
         [{ opacity: 0 }, { opacity: 0.5, offset: 0.55 }, { opacity: 0.5 }], flapOpts
     );
@@ -1016,11 +1188,10 @@ openBtn.addEventListener('click', async () => {
     );
     await flapOpen.finished;
 
-    // 2. Flap is open: tuck it behind the letter so the letter rises in front of it
+    // 2. Flap is open: tuck it behind the letter
     topFlap.style.zIndex = 0;
 
-    // 3. Letter rises out of the pocket (stays behind the front flaps).
-    //    Envelope drifts down by half the rise so the composition stays centered.
+    // 3. Letter rises out of the pocket
     const rise = letter.offsetHeight * 0.5;
     wrapper.animate(
         [{ transform: 'translateY(0)' }, { transform: `translateY(${rise / 2}px)` }],
@@ -1031,11 +1202,9 @@ openBtn.addEventListener('click', async () => {
         { duration: 1000, easing: ease, fill: 'forwards' }
     ).finished;
 
-    // 4. Pull the card free: the envelope first slides down until the card fully clears the
-    //    pocket, then keeps falling off-screen (fading only at the very end) while the card,
-    //    now in front, glides to center and grows to fill the screen.
+    // 4. Pull the card free
     const H    = wrapper.offsetHeight;
-    const pull = H * 0.62; // enough for the pocket's top edges to clear the card's bottom edge
+    const pull = H * 0.62;
     const fall = Math.max(window.innerHeight - wrapper.getBoundingClientRect().top + 40, pull + 1);
     const pullMs = 550, dropMs = 1500, pullAt = pullMs / dropMs;
     const dropOpts = { duration: dropMs, fill: 'forwards' };
@@ -1047,12 +1216,11 @@ openBtn.addEventListener('click', async () => {
     const fadeFrames = [{ opacity: 1 }, { opacity: 1, offset: 0.7 }, { opacity: 0 }];
     inside.animate(dropFrames(), dropOpts);
     flaps.animate(dropFrames(), dropOpts);
-    // Only transform the 3D flap — animating its opacity would flatten it and flip the visible face
     topFlap.animate(dropFrames(`rotateX(${FLAP_ANGLE}deg)`), dropOpts);
     [inside, flaps, topFlap.querySelector('.flap-inside')].forEach(el => el.animate(fadeFrames, dropOpts));
 
     await wait(pullMs);
-    letter.style.zIndex = 6; // card is clear of the pocket, so bringing it forward causes no jump
+    letter.style.zIndex = 6;
 
     Array.from(letter.children).forEach(el =>
         el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 450, delay: 150, easing: 'ease-out', fill: 'forwards' })
@@ -1063,7 +1231,6 @@ openBtn.addEventListener('click', async () => {
         { duration: 500, delay: 200, fill: 'forwards' }
     );
 
-    // Measure live so it works for any viewport size / orientation
     const r  = letter.getBoundingClientRect();
     const vw = window.innerWidth, vh = window.innerHeight;
     const scale = Math.max(vw / r.width, vh / r.height) * 1.08;
@@ -1075,9 +1242,9 @@ openBtn.addEventListener('click', async () => {
          { transform: `translate(${dx}px, ${dy - rise}px) scale(${scale})`, borderRadius: '0px' }],
         { duration: 1300, easing: 'cubic-bezier(0.65, 0, 0.35, 1)', fill: 'forwards' }
     );
-    await wait(1250); // start the cross-fade just as the paper settles
+    await wait(1250);
 
-    // 5. Paper now fills the screen and matches the hero's ivory — cross-fade into the site
+    // 5. Cross-fade into the site
     revealSite();
 });
 
@@ -1097,12 +1264,9 @@ musicBtn.addEventListener('click', () => {
 });
 
 // --- RSVP Form Submission ---
-// Fill in ONE of these (see README.md):
-//   endpoint — the Google Apps Script web-app URL (replies are saved to a Google Sheet; recommended)
-//   email    — fallback: opens the guest's mail app addressed to you
 const RSVP_CONFIG = {
     endpoint: 'https://script.google.com/macros/s/AKfycbwC9XtlhIFKWNC6xo7tou2o-dEGP2IJqNElEziOvi5lq2H-qyBgkZKUmKkmYXz3Ugd-/exec',
-    email: '' // not needed while endpoint is set; the Apps Script e-mails both of us
+    email: ''
 };
 
 const rsvpForm   = document.getElementById('rsvpForm');
@@ -1120,16 +1284,13 @@ rsvpForm.addEventListener('submit', async e => {
 
     const data = new FormData(rsvpForm);
     const name = data.get('name').trim();
-    if (data.get('website')) return; // bot
+    if (data.get('website')) return;
 
     if (RSVP_CONFIG.endpoint) {
         rsvpSubmit.disabled = true;
         rsvpSubmit.textContent = t('fSending');
         showRsvpStatus('');
         try {
-            // Form-encoded body = "simple" CORS request (no preflight). A public Apps Script web app
-            // answers with Access-Control-Allow-Origin: *, so we can read its {ok:true} reply and
-            // never show "thank you" for an RSVP that didn't actually reach the sheet.
             const res = await fetch(RSVP_CONFIG.endpoint, { method: 'POST', body: new URLSearchParams(data) });
             const reply = await res.json().catch(() => ({}));
             if (!res.ok || !reply.ok) throw new Error(`RSVP endpoint replied ${res.status}`);
